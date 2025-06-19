@@ -1926,7 +1926,7 @@ a
 .footer-brand {
     grid-column: 1 / -1;
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .footer-sections {
@@ -2132,7 +2132,7 @@ a
 
 .footer-bottom {
     position: relative;
-    margin-top: 2rem;
+    margin-top: 0;
 }
 
 .footer-bottom-content {
@@ -2189,7 +2189,7 @@ a
 @media (min-width: 768px) {
     .footer-content {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 2rem;
     }
     
     .footer-sections {
@@ -2199,7 +2199,7 @@ a
     
     .footer-brand {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
     
     .social-links {
