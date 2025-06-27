@@ -253,10 +253,25 @@ a:focus {
     transition: transform 0.3s ease;
     border: none;
     font-family: inherit;
+    display: flex;
+    align-items: center;
 }
 
 .nav-logo:hover {
     transform: scale(1.05);
+}
+
+.nav-logo-image {
+    height: 32px;
+    width: auto;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.3));
+}
+
+.nav-logo:hover .nav-logo-image {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.5));
 }
 
 .nav-items {

@@ -326,6 +326,16 @@
                             "aria-label": "Go to homepage",
                             type: "button",
                         },
+                        h("img", {
+                            src: "logo.png",
+                            alt: "PictaLens Logo",
+                            className: "nav-logo-image",
+                            style: {
+                                height: "32px",
+                                width: "auto",
+                                marginRight: "8px"
+                            }
+                        }),
                         "PictaLens",
                     ),
                     h(
