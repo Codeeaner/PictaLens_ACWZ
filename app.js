@@ -1,5 +1,4 @@
-
-        const { useState, useEffect, useRef, useMemo, useCallback, createElement: h } = React;
+const { useState, useEffect, useRef, useMemo, useCallback, createElement: h } = React;
 
         // Performance optimizations and utilities
         const useIntersectionObserver = (callback, options = {}) => {
@@ -1281,6 +1280,7 @@
             );
             const [imageWidth, setImageWidth] = useState(512);
             const [imageHeight, setImageHeight] = useState(512);
+            const [model, setModel] = useState("flux"); // Added model state
             const [showAdvanced, setShowAdvanced] = useState(false);
             const [generatingFashion, setGeneratingFashion] = useState(false);
             const [generatedFashion, setGeneratedFashion] = useState(
@@ -1289,6 +1289,7 @@
             const [fashionPrompt, setFashionPrompt] = useState("elegant evening gown with flowing fabric");
             const [fashionWidth, setFashionWidth] = useState(512);
             const [fashionHeight, setFashionHeight] = useState(768);
+            const [fashionModel, setFashionModel] = useState("flux"); // Added fashionModel state
             const [showFashionAdvanced, setShowFashionAdvanced] = useState(false);
             const [toastVisible, setToastVisible] = useState(false);
             const [toastMessage, setToastMessage] = useState("");
@@ -1383,28 +1384,34 @@
                 { name: "Wide", width: 1024, height: 576 },
                 { name: "Ultra Wide", width: 1152, height: 512 },
             ];
+const generateArt = async () => {
+    setGeneratingArt(true);
 
-            const generateArt = async () => {
-                setGeneratingArt(true);
-                try {
-                    const encodedPrompt = encodeURIComponent(currentPrompt);
-                    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${imageWidth}&height=${imageHeight}&nologo=true&model=flux`;
+    try {
+        const encodedPrompt = encodeURIComponent(currentPrompt);
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${imageWidth}&height=${imageHeight}&nologo=true&model=${model}`;
 
-                    await new Promise((resolve) => setTimeout(resolve, 2000));
-                    setGeneratedImage(imageUrl);
-                } catch (error) {
-                    console.error("Error generating image:", error);
-                } finally {
-                    setGeneratingArt(false);
-                }
-            };
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setGeneratedImage(imageUrl);
+        // Save image URL and timestamp to Firebase
+        try {
+            await storeImageUrl(imageUrl);
+        } catch (firebaseError) {
+            console.error("Error saving image to Firebase:", firebaseError);
+        }
+    } catch (error) {
+        console.error("Error generating image:", error);
+    } finally {
+        setGeneratingArt(false);
+    }
+};
 
             const generateFashion = async () => {
                 setGeneratingFashion(true);
                 try {
                     const fullPrompt = `Fashion clothes with realistic model, ${fashionPrompt}`;
                     const encodedPrompt = encodeURIComponent(fullPrompt);
-                    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${fashionWidth}&height=${fashionHeight}&nologo=true&model=flux`;
+                    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${fashionWidth}&height=${fashionHeight}&nologo=true&model=${fashionModel}`;
 
                     await new Promise((resolve) => setTimeout(resolve, 2000));
                     setGeneratedFashion(imageUrl);
@@ -1473,6 +1480,20 @@
                     showToast("Failed to copy link");
                 }
             };
+
+            // Update generatedImage when model, imageWidth, or imageHeight changes
+            useEffect(() => {
+                const encodedPrompt = encodeURIComponent(currentPrompt);
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${imageWidth}&height=${imageHeight}&nologo=true&model=${model}`;
+                setGeneratedImage(imageUrl);
+            }, [model, imageWidth, imageHeight]);
+            // Update generatedFashion when fashionModel, fashionWidth, or fashionHeight changes
+            useEffect(() => {
+                const fullPrompt = `Fashion clothes with realistic model, ${fashionPrompt}`;
+                const encodedPrompt = encodeURIComponent(fullPrompt);
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${fashionWidth}&height=${fashionHeight}&nologo=true&model=${fashionModel}`;
+                setGeneratedFashion(imageUrl);
+            }, [fashionModel, fashionWidth, fashionHeight]);
 
             return h(
                 "section",
@@ -1703,6 +1724,60 @@
                                                     ),
                                                 ),
                                             ),
+                                       h(
+                                           "div",
+                                           { className: "form-group" },
+                                           h("label", { className: "form-label" }, "AI Model"),
+                                           h(
+                                               "div",
+                                               { className: "model-options" },
+                                               h(
+                                                   "label",
+                                                   { className: "model-option" },
+                                                   h("input", {
+                                                       type: "radio",
+                                                       name: "model",
+                                                       value: "flux",
+                                                       checked: model === "flux",
+                                                       onChange: () => setModel("flux")
+                                                   }),
+                                                   h(
+                                                       "div",
+                                                       { className: "model-content" },
+                                                       h(
+                                                           "svg",
+                                                           { className: "model-icon", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor" },
+                                                           h("path", { d: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" }),
+                                                           h("path", { d: "M12 6v6l4 2" })
+                                                       ),
+                                                       h("div", { className: "model-name" }, "Flux"),
+                                                       h("div", { className: "model-desc" }, "Standard quality")
+                                                   )
+                                               ),
+                                               h(
+                                                   "label",
+                                                   { className: "model-option" },
+                                                   h("input", {
+                                                       type: "radio",
+                                                       name: "model",
+                                                       value: "turbo",
+                                                       checked: model === "turbo",
+                                                       onChange: () => setModel("turbo")
+                                                   }),
+                                                   h(
+                                                       "div",
+                                                       { className: "model-content" },
+                                                       h(
+                                                           "svg",
+                                                           { className: "model-icon", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor" },
+                                                           h("path", { d: "M13 2L3 14h9l-1 8 10-12h-9l1-8z" })
+                                                       ),
+                                                       h("div", { className: "model-name" }, "Turbo"),
+                                                       h("div", { className: "model-desc" }, "High speed")
+                                                   )
+                                               )
+                                           )
+                                       ),
                                         h(
                                             "div",
                                             { className: "action-buttons" },
@@ -2049,6 +2124,39 @@
                                                     ),
                                                 ),
                                             ),
+                                       h(
+                                           "div",
+                                           { className: "form-group" },
+                                           h("label", { className: "form-label" }, "AI Model"),
+                                           h(
+                                               "div",
+                                               { className: "model-options" },
+                                               h(
+                                                   "label",
+                                                   { className: "model-option" },
+                                                   h("input", {
+                                                       type: "radio",
+                                                       name: "fashionModel",
+                                                       value: "flux",
+                                                       checked: fashionModel === "flux",
+                                                       onChange: () => setFashionModel("flux")
+                                                   }),
+                                                   "Flux"
+                                               ),
+                                               h(
+                                                   "label",
+                                                   { className: "model-option" },
+                                                   h("input", {
+                                                       type: "radio",
+                                                       name: "fashionModel",
+                                                       value: "turbo",
+                                                       checked: fashionModel === "turbo",
+                                                       onChange: () => setFashionModel("turbo")
+                                                   }),
+                                                   "Turbo"
+                                               )
+                                           )
+                                       ),
                                         h(
                                             "div",
                                             { className: "action-buttons" },
@@ -2366,6 +2474,15 @@
                     h(FashionEvolution, null),
                     h(DigitalArt, null),
                 ),
+                h(
+                    "footer",
+                    { className: "footer" },
+                    h(
+                        "div",
+                        { style: { textAlign: "center", padding: "1rem", color: "#888" } },
+                        "© 2025 PictaLens. All rights reserved."
+                    )
+                )
             );
         };
 

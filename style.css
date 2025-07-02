@@ -2257,3 +2257,286 @@ a
         display: block;
     }
 }
+
+/* Enhanced Model Selection UI */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-label::before {
+    content: "⚡";
+    font-size: 1.2rem;
+}
+
+.model-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.model-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.4));
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    overflow: hidden;
+}
+
+.model-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(34, 211, 238, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.model-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.model-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+}
+
+.model-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    transition: all 0.3s ease;
+    stroke-width: 2;
+}
+
+.model-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    transition: color 0.3s ease;
+    margin: 0;
+}
+
+.model-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+/* Hover States */
+.model-option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.model-option:hover::before {
+    opacity: 1;
+}
+
+.model-option:hover .model-icon {
+    background: rgba(56, 189, 248, 0.3);
+    transform: scale(1.1);
+    color: #0ea5e9;
+}
+
+.model-option:hover .model-name {
+    color: #f8fafc;
+}
+
+.model-option:hover .model-desc {
+    color: #cbd5e1;
+}
+
+/* Selected States */
+.model-option:has(input[type="radio"]:checked) {
+    border-color: #38bdf8;
+    background: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(34, 211, 238, 0.1));
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(56, 189, 248, 0.25);
+}
+
+.model-option:has(input[type="radio"]:checked)::before {
+    opacity: 1;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(34, 211, 238, 0.1));
+}
+
+.model-option:has(input[type="radio"]:checked) .model-icon {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+}
+
+.model-option:has(input[type="radio"]:checked) .model-name {
+    color: #38bdf8;
+    font-weight: 700;
+}
+
+.model-option:has(input[type="radio"]:checked) .model-desc {
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+/* Selected indicator checkmark */
+.model-option:has(input[type="radio"]:checked)::after {
+    content: '✓';
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: #38bdf8;
+    color: #0f172a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: bold;
+    z-index: 3;
+    animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes checkmarkPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Focus styles for accessibility */
+.model-option:focus-within {
+    outline: 2px solid #38bdf8;
+    outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .model-options {
+        grid-template-columns: 1fr;
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .model-option {
+        padding: 1rem;
+    }
+    
+    .model-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .model-name {
+        font-size: 1rem;
+    }
+    
+    .model-desc {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation for initial load */
+.model-option {
+    animation: slideInUp 0.5s ease-out;
+}
+
+.model-option:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Special styling for different model types */
+.model-option:has(input[value="flux"]) .model-icon {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.model-option:has(input[value="flux"]:checked) .model-icon {
+    background: #22c55e;
+    color: #0f172a;
+}
+
+.model-option:has(input[value="flux"]:checked) .model-name {
+    color: #22c55e;
+}
+
+.model-option:has(input[value="turbo"]) .model-icon {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.model-option:has(input[value="turbo"]:checked) .model-icon {
+    background: #fbbf24;
+    color: #0f172a;
+}
+
+.model-option:has(input[value="turbo"]:checked) .model-name {
+    color: #fbbf24;
+}
+
+/* Pulse animation for selected option */
+.model-option:has(input[type="radio"]:checked) {
+    animation: selectedPulse 2s infinite;
+}
+
+@keyframes selectedPulse {
+    0%, 100% {
+        box-shadow: 0 12px 28px rgba(56, 189, 248, 0.25);
+    }
+    50% {
+        box-shadow: 0 12px 28px rgba(56, 189, 248, 0.4);
+    }
+}
